@@ -92,7 +92,10 @@ public class CollapsedStatusBarFragment extends Fragment implements CommandQueue
     // Validus logo
     private ImageView mValidusLogo;
     private int mLogoStyle;
+    private View mWeatherImageView;
+    private View mWeatherTextView;
     private boolean mShowLogo;
+    private int mShowWeather;
     private int mLogoColor;
     private final Handler mHandler = new Handler();
 
@@ -104,6 +107,9 @@ public class CollapsedStatusBarFragment extends Fragment implements CommandQueue
         void observe() {
             getContext().getContentResolver().registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_LOGO),
+                    false, this, UserHandle.USER_ALL);
+ 	    getContext().getContentResolver().registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_SHOW_WEATHER_TEMP),
                     false, this, UserHandle.USER_ALL);
             getContext().getContentResolver().registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_LOGO_STYLE),
@@ -214,6 +220,8 @@ public class CollapsedStatusBarFragment extends Fragment implements CommandQueue
         mCenterClock = mStatusBar.findViewById(R.id.center_clock);
         Dependency.get(DarkIconDispatcher.class).addDarkReceiver(mSignalClusterView);
         mValidusLogo = mStatusBar.findViewById(R.id.status_bar_logo);
+        mWeatherTextView = mStatusBar.findViewById(R.id.weather_temp);
+        mWeatherImageView = mStatusBar.findViewById(R.id.weather_image);
         updateSettings(false);
         updateLogoSettings(false);
         // Default to showing until we know otherwise.
@@ -453,6 +461,9 @@ public class CollapsedStatusBarFragment extends Fragment implements CommandQueue
         mShowLogo = Settings.System.getIntForUser(
                 getContext().getContentResolver(), Settings.System.STATUS_BAR_LOGO, 0,
                 UserHandle.USER_CURRENT) == 1;
+	mShowWeather = Settings.System.getIntForUser(
+                getContext().getContentResolver(), Settings.System.STATUS_BAR_SHOW_WEATHER_TEMP, 0,
+                UserHandle.USER_CURRENT);
         mLogoColor = Settings.System.getIntForUser(
                 getContext().getContentResolver(), Settings.System.STATUS_BAR_LOGO_COLOR, 0xff009688,
                 UserHandle.USER_CURRENT);
